@@ -29,7 +29,7 @@ A YOLO face detector by itself cannot identify a student.
 
 FOLDER CONTENTS
 -----------------------------------------------
-SurakshyaCam_ESP32_Attendance_V2.ino
+espcode.ino
 surakshya_attendance_server.py
 requirements.txt
 run_server.bat
