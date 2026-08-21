@@ -1,4 +1,4 @@
-#include <Arduino.h>
+ #include <Arduino.h>
 #include "esp_camera.h"
 #include <WiFi.h>
 #include <HTTPClient.h>
@@ -26,7 +26,7 @@ const char* WIFI_PASSWORD = "xxxxxxxx";
 //   "http://192.168.1.20:5000/upload";
 
 const char* DATABASE_SERVER_URL =
-  "http://192.168.1.20:5000/upload";
+  "http://192.168.137.133/upload";
 
 
 // =====================================================
@@ -79,6 +79,17 @@ HardwareSerial UnoSerial(2);
 #define BUZZER_PIN 14
 #define BUZZER_ALERT_MS 5000
 #define BUZZER_ACTIVE_HIGH true
+
+struct UploadJob;
+
+struct UploadJob
+{
+  uint8_t* jpeg;
+  size_t length;
+  char sensor[20];
+  char timestamp[50];
+  unsigned long espEventNumber;
+};
 
 volatile unsigned long buzzerOffAt = 0;
 
@@ -158,15 +169,6 @@ volatile bool streamClientActive = false;
 // Every saved PIR JPEG is copied into its own upload job.
 // The background task sends that copy to the laptop server,
 // so the camera can continue streaming/capturing.
-
-struct UploadJob
-{
-  uint8_t* jpeg;
-  size_t length;
-  char sensor[20];
-  char timestamp[50];
-  unsigned long espEventNumber;
-};
 
 QueueHandle_t uploadQueue = NULL;
 
@@ -476,7 +478,7 @@ static const char* STREAM_PART =
 // WEB PAGE
 // =====================================================
 
-static const char WEBPAGE[] PROGMEM = R"rawliteral(
+static const char WEBPAGE[] PROGMEM = R"HTML(
 <!DOCTYPE html>
 
 <html>
@@ -600,7 +602,7 @@ document.getElementById("stream").src =
 let previousCount = -1;
 
 
-function refreshCapture()
+const refreshCapture = () =>
 {
   const img =
     document.getElementById("capture");
@@ -614,10 +616,10 @@ function refreshCapture()
 }
 
 
-function manualCapture()
+const manualCapture = () =>
 {
   fetch("/testcapture?t=" + Date.now())
-  .then(function() {
+  .then(() => {
 
     setTimeout(
       refreshCapture,
@@ -628,18 +630,18 @@ function manualCapture()
 }
 
 
-function updateStatus()
+const updateStatus = () =>
 {
   fetch(
     "/status?t=" + Date.now(),
     {cache:"no-store"}
   )
 
-  .then(function(response) {
+  .then((response) => {
     return response.json();
   })
 
-  .then(function(data) {
+  .then((data) => {
 
     document.getElementById(
       "sensor"
@@ -683,7 +685,7 @@ updateStatus();
 </body>
 
 </html>
-)rawliteral";
+)HTML";
 
 // =====================================================
 // CAMERA INITIALIZATION
