@@ -23,7 +23,7 @@ const char* WIFI_PASSWORD = "xxxxxxxx";
 //
 // Example:
 // const char* DATABASE_SERVER_URL =
-//   "http://192.168.1.20:5000/upload";
+//   "http://192.168.1.20:5000/upload";hya chai ip halne wifi ko nabirsi
 
 const char* DATABASE_SERVER_URL =
   "http://192.168.137.133/upload";
